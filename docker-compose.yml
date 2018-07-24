@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 
 services:
   # service de base de données
@@ -46,16 +46,7 @@ services:
        - apache2-php56
      ports:
       - "21:21"
-      - "30000:30000"
-      - "30001:30001"
-      - "30002:30002"
-      - "30003:30003"
-      - "30004:30004"
-      - "30005:30005"
-      - "30006:30006"
-      - "30007:30007"
-      - "30008:30008"
-      - "30009:30009"
+      - "30000-30009:30000:30009"
      environment:
        PUBLICHOST: 172.18.0.21
        ADDED_FLAGS: -O w3c:/var/log/pure-ftpd/transfer.log
