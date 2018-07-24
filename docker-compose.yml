@@ -1,1 +1,86 @@
+version: '2.4'
+
+services:
+  # service de base de données
+   mysql-server:
+     image: tikia/docker-mysql-server:latest
+     volumes:
+       - mysql_data:/var/lib/mysql
+     restart: always
+     ports:
+      - "3306:3306"
+      - "33060:33060"
+     environment:
+       MYSQL_ROOT_HOST: 172.17.1.%
+       MYSQL_ROOT_PASSWORD: myP4ssW0rd
+       #MYSQL_DATABASE: wordpress
+       #MYSQL_HOST: 172.17.0.%
+       #MYSQL_USER: wordpress
+       #MYSQL_PASSWORD: wordpress
+     networks:
+       app_net:
+          ipv4_address: 172.17.1.10
+  # service phpMyAdmin
+   phpmyadmin:
+     image: phpmyadmin/phpmyadmin:latest
+     restart: always
+     ports:
+      - "82:80"
+     environment:
+       PMA_HOST: 172.17.1.10
+       PMA_PORT: 3306
+     networks:
+       app_net:
+          ipv4_address: 172.17.1.20
+  # service pure-ftpd
+   pureftpd:
+     image: stilliard/pure-ftpd:hardened
+     volumes:
+       - pureftpd-user:/etc/pure-ftpd/passwd
+       - /home/renaud:/home/ftpusers
+     restart: always
+     ports:
+      - "21:21"
+      - "30000:30000"
+      - "30001:30001"
+      - "30002:30002"
+      - "30003:30003"
+      - "30004:30004"
+      - "30005:30005"
+      - "30006:30006"
+      - "30007:30007"
+      - "30008:30008"
+      - "30009:30009"
+     environment:
+       PUBLICHOST: 172.17.1.21
+       ADDED_FLAGS: -O w3c:/var/log/pure-ftpd/transfer.log
+     networks:
+       app_net:
+          ipv4_address: 172.17.1.21
+  # service apache2 + PHP 7
+   apache2-php7:
+     image: tikia/docker-php7-apache:latest
+     volumes:
+       - /home/renaud/apache2-php7/www:/var/www
+       - /home/renaud/apache2-php7/vhosts:/etc/apache2/sites-enabled
+       - /home/renaud/apache2-php7/logs:/var/log/apache2
+     restart: always
+     ports:
+      - "80:80"
+     networks:
+       app_net:
+          ipv4_address: 172.17.1.30
+   # service apache2 + PHP 5.6
+   apache2-php56:
+     image: tikia/docker-php56-apache:latest
+     volumes:
+       - /home/renaud/apache2-php56/www:/var/www
+       - /home/renaud/apache2-php56/vhosts:/etc/apache2/sites-enabled
+       - /home/renaud/apache2-php56/logs:/var/log/apache2
+     restart: always
+     ports:
+      - "81:80"
+     networks:
+       app_net:
+          ipv4_address: 172.17.1.31
 
